@@ -63,26 +63,26 @@ evaluation = df['Evaluation']
 x, y = formatData(fen, evaluation)
 
 model = keras.Sequential(name="eval_bot_1.0")
-model.add(Conv2D(32, kernel_size=3, activation='relu', input_shape=x[0].shape))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(64, kernel_size=3, activation='relu'))
-model.add(Flatten(data_format=None))
-model.add(Dense(1))
+model.add(Conv2D(16, kernel_size=3, padding='same', activation='relu', input_shape=x[0].shape))
+model.add(Conv2D(32, kernel_size=3, padding='same', activation='relu'))
+model.add(Conv2D(64, kernel_size=3, padding='same', activation='relu'))
+model.add(Flatten())
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(1, activation='sigmoid'))
 
 model.compile(
     optimizer='adam',
     loss='mae',
+    metrics=['accuracy']
 )
+
+model.summary()
 
 earlystop = EarlyStopping(monitor='loss', min_delta=0, patience=250, verbose=0, mode='auto', baseline=None, restore_best_weights=True)
 
-history = model.fit(x, y, batch_size=64, epochs=100, callbacks=[earlystop])
+history = model.fit(x, y, batch_size=250, epochs=100, callbacks=[earlystop])
 model.save(path + '\\Model')
 
-plt.plot(history.history['loss'])
-plt.title('Eval Bot')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.show()
+pd.DataFrame(history.history)[['loss', 'accuracy']].plot();
 
-model.save(os.path.dirname(__file__), 'Model')
