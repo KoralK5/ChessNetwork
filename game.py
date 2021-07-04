@@ -46,7 +46,7 @@ def convert(fen):
   
   def show(board, evaluation):
     print('FEN:', board.fen(), '\n')
-    print('Evaluation:', str(evaluation) + '%')
+    print('Evaluation:', str(evaluation))
     print('White' if evaluation > 0 else 'Black', 'is winning!\n\n')
     print(board)
 
